@@ -1,0 +1,138 @@
+<div class="slider-wpb">
+  <div class="slides">
+    <img src="https://via.placeholder.com/1200x600/ff9999/000?text=Image+1">
+    <img src="https://via.placeholder.com/1200x600/99ff99/000?text=Image+2">
+    <img src="https://via.placeholder.com/1200x600/9999ff/000?text=Image+3">
+  </div>
+
+  <!-- Arrows -->
+  <button class="arrow prev">&#10094;</button>
+  <button class="arrow next">&#10095;</button>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<!-- CSS (Responsive + White Controls) -->
+<style>
+.slider-wpb {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slides */
+.slider-wpb .slides {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slider-wpb .slides::-webkit-scrollbar {
+  display: none;
+}
+
+.slider-wpb img {
+  width: 100%;
+  height: auto;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+/* Arrows */
+.slider-wpb .arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border: 1px solid #fff;
+  font-size: 28px;
+  padding: 8px 14px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.slider-wpb .prev { left: 15px; }
+.slider-wpb .next { right: 15px; }
+
+/* Pagination */
+.slider-wpb .pagination {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.slider-wpb .pagination span {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.slider-wpb .pagination span.active {
+  background: #fff;
+  opacity: 1;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .slider-wpb .arrow {
+    font-size: 22px;
+    padding: 6px 10px;
+  }
+}
+</style>
+/* JavaScript (Responsive Scroll + Pagination Sync) */
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const slider = document.querySelector(".slider-wpb .slides");
+  const slides = slider.children;
+  const dots = document.querySelectorAll(".slider-wpb .pagination span");
+  let index = 0;
+
+  function goToSlide(i) {
+    index = i;
+    slider.scrollTo({
+      left: index * slider.offsetWidth,
+      behavior: "smooth"
+    });
+    updateDots();
+  }
+
+  function updateDots() {
+    dots.forEach(d => d.classList.remove("active"));
+    dots[index].classList.add("active");
+  }
+
+  document.querySelector(".next").onclick = () => {
+    goToSlide((index + 1) % slides.length);
+  };
+
+  document.querySelector(".prev").onclick = () => {
+    goToSlide((index - 1 + slides.length) % slides.length);
+  };
+
+  dots.forEach((dot, i) => {
+    dot.onclick = () => goToSlide(i);
+  });
+
+  slider.addEventListener("scroll", () => {
+    index = Math.round(slider.scrollLeft / slider.offsetWidth);
+    updateDots();
+  });
+
+  updateDots();
+});
+</script>
